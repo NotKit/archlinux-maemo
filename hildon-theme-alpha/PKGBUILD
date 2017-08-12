@@ -1,0 +1,17 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=hildon-theme-alpha
+pkgver=9.4
+pkgrel=1
+pkgdesc="Nokia Nseries Theme for Hildon"
+arch=('any')
+url="https://github.com/fremantle-gtk2"
+license=('custom')
+source=("https://maemo-repos.com/apt-mirror/mirror/downloads.maemo.nokia.com/fremantle/ssu/210/hildon-theme-alpha_9.4+0m5_all.deb")
+md5sums=('6d9f0607cb97079b3f80f75b28a2dd6a')
+
+package() {
+    cd "$pkgdir"
+    tar xfz "$srcdir/data.tar.gz"
+    mkdir -p etc/hildon
+    ln -s /usr/share/themes/alpha etc/hildon/theme
+}

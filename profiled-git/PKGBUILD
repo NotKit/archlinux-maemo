@@ -1,0 +1,29 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=profiled-git
+pkgver=r50.77ca133
+pkgrel=1
+pkgdesc="Maemo profile daemon, manages user settings"
+arch=('i686' 'x86_64' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/profiled"
+license=('GPL')
+depends=('dbus-glib')
+makedepends=('git' 'doxygen')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("git+https://github.com/fremantle-gtk2/profiled.git")
+md5sums=('SKIP')
+
+pkgver() {
+	cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd "$srcdir/${pkgname%-git}"
+    make
+}
+
+package() {
+	cd "$srcdir/${pkgname%-git}"
+	make ROOT="$pkgdir/" install
+}

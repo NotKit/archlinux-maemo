@@ -1,0 +1,36 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=hildon-desktop-git
+pkgver=r2524.c178acc6
+pkgrel=1
+pkgdesc="Hildon desktop for Fremantle"
+arch=('i686' 'x86_64' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/hildon"
+license=('GPL')
+depends=('libhildon' 'libmatchbox2' 'libhildondesktop' 'clutter' 'gnome-menus2' 'profiled')
+makedepends=('git' 'mce-headers')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("git+https://github.com/fremantle-gtk2/hildon-desktop.git#branch=gtk2-clutter-1.x")
+md5sums=('SKIP')
+
+pkgver() {
+	cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+	cd "$srcdir/${pkgname%-git}"
+    sed -i -e 's/libpng12/libpng/g' configure.ac
+}
+
+build() {
+	cd "$srcdir/${pkgname%-git}"
+    ./autogen.sh
+    ./configure --prefix=/usr
+    make
+}
+
+package() {
+	cd "$srcdir/${pkgname%-git}"
+	make DESTDIR="$pkgdir/" install
+}

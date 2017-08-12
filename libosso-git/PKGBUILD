@@ -1,0 +1,32 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=libosso-git
+pkgver=r2.5e29767
+pkgrel=1
+pkgdesc="Basic library for maemo applications"
+arch=('i686' 'x86_64' 'arm' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/libosso"
+license=('GPL')
+depends=('dbus-glib')
+makedepends=('git' 'mce-headers' 'doxygen')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("git+https://github.com/fremantle-gtk2/libosso.git")
+md5sums=('SKIP')
+options=(debug !strip)
+
+pkgver() {
+	cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd "$srcdir/${pkgname%-git}"
+	./autogen.sh
+    ./configure --prefix=/usr
+    make
+}
+
+package() {
+	cd "$srcdir/${pkgname%-git}"
+	make DESTDIR="$pkgdir/" install
+}

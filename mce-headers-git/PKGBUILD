@@ -1,0 +1,31 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=mce-headers-git
+pkgver=r3.4a1896a
+pkgrel=1
+pkgdesc="Development files for mce"
+arch=('i686' 'x86_64' 'arm' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/mce-dev"
+license=('GPL')
+makedepends=('git' 'doxygen')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=('git+https://github.com/fremantle-gtk2/mce-dev.git')
+md5sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/mce-dev"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    cd "$srcdir/mce-dev"
+    mkdir doc
+    make doc
+}
+
+package() {
+    cd "$srcdir/mce-dev"
+    make DESTDIR="$pkgdir/" install
+    install -d $pkgdir/usr/share/doc/mce-doc/html/
+    install -m 644 doc/html/* $pkgdir/usr/share/doc/mce-doc/html/
+}

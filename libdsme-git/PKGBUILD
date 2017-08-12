@@ -1,0 +1,28 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=libdsme-git
+pkgver=r5.3b90fe5
+pkgrel=1
+pkgdesc="Libraries for programs that communicate with the Device State Management Entity"
+arch=('i686' 'x86_64' 'arm' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/libdsme"
+license=('GPL')
+makedepends=('git')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=('git+https://github.com/fremantle-gtk2/libdsme.git')
+md5sums=('SKIP')
+
+pkgver() {
+	cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd "$srcdir/${pkgname%-git}"
+	make
+}
+
+package() {
+	cd "$srcdir/${pkgname%-git}"
+	make DESTDIR="$pkgdir/" install
+}

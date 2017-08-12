@@ -1,0 +1,32 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=libhildon-git
+pkgver=r1991.954ebe8
+pkgrel=1
+pkgdesc="Hildon libraries"
+arch=('i686' 'x86_64' 'arm' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/hildon"
+license=('GPL')
+depends=('gtk2' 'gconf' 'libcanberra' 'maemo-l10n')
+makedepends=('git')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("${pkgname%-git}::git+https://github.com/fremantle-gtk2/hildon.git")
+md5sums=('SKIP')
+
+pkgver() {
+	cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd "$srcdir/${pkgname%-git}"
+    ./autogen.sh --prefix=/usr
+    make
+}
+
+package() {
+	cd "$srcdir/${pkgname%-git}"
+	make DESTDIR="$pkgdir/" install
+	# Prevent conflict with maemo-l10n
+	rm "$pkgdir/usr/share/locale/en_GB/LC_MESSAGES/hildon-libs.mo"
+}

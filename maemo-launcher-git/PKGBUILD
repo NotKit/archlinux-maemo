@@ -1,0 +1,31 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=maemo-launcher-git
+pkgver=r296.40ba057
+pkgrel=1
+pkgdesc="Application startup accelerator for Maemo"
+arch=('i686' 'x86_64' 'arm' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/maemo-launcher"
+license=('GPL')
+depends=('libhildon' 'iphbd' 'dbus-glib')
+makedepends=('git')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("git+https://github.com/fremantle-gtk2/maemo-launcher.git")
+md5sums=('SKIP')
+
+pkgver() {
+	cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd "$srcdir/${pkgname%-git}"
+	autoreconf -i -f
+    ./configure --prefix=/usr
+    make
+}
+
+package() {
+	cd "$srcdir/${pkgname%-git}"
+	make DESTDIR="$pkgdir/" install
+}

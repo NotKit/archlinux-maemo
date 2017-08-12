@@ -1,0 +1,30 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=libhildondesktop-git
+pkgver=r202.813b163
+pkgrel=1
+pkgdesc="Hildon Desktop library"
+arch=('i686' 'x86_64' 'arm' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/libhildondesktop"
+license=('GPL')
+depends=('libhildon' 'iphbd' 'dbus-glib')
+makedepends=('git')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("git+https://github.com/fremantle-gtk2/libhildondesktop.git#branch=gtk2")
+md5sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    cd "$srcdir/${pkgname%-git}"
+    ./autogen.sh --prefix=/usr CFLAGS="${CFLAGS} -Wno-error=unused-but-set-variable"
+    make
+}
+
+package() {
+    cd "$srcdir/${pkgname%-git}"
+    make DESTDIR="$pkgdir/" install
+}

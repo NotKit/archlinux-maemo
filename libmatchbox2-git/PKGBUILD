@@ -1,0 +1,37 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=libmatchbox2-git
+pkgver=r517.e9c043a
+pkgrel=1
+pkgdesc="Library for Matchbox Project applications"
+arch=('i686' 'x86_64' 'arm' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/libmatchbox2"
+license=('GPL')
+makedepends=('git')
+depends=('pango' 'libpng' 'libxext' 'clutter')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=('git+https://github.com/fremantle-gtk2/libmatchbox2.git#branch=upstream-gtk2')
+md5sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+    cd "$srcdir/${pkgname%-git}"
+    sed -i -e 's/libpng12/libpng/g' configure.ac
+    sed -i -e 's/png_ptr->jmpbuf/png_jmpbuf(png_ptr)/g' matchbox/theme-engines/mb-wm-theme-png.c
+}
+
+build() {
+    cd "$srcdir/${pkgname%-git}"
+    autoreconf -i -f
+    ./configure --prefix=/usr --enable-png-theme --with-pango CFLAGS="${CFLAGS} -Wno-error=unused-result -Wno-error=deprecated-declarations"
+    make
+}
+
+package() {
+    cd "$srcdir/${pkgname%-git}"
+    make DESTDIR="$pkgdir/" install
+}

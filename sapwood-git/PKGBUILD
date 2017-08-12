@@ -1,0 +1,31 @@
+# Maintainer: TheKit <nekit1000 at gmail.com>
+pkgname=sapwood-git
+pkgver=r250.25fb264
+pkgrel=1
+pkgdesc="Maemo pixbuf-based theme for GTK+ 2.x"
+arch=('i686' 'x86_64' 'arm' 'armv7h' 'aarch64')
+url="https://github.com/fremantle-gtk2/sapwood"
+license=('GPL')
+depends=('gtk2')
+makedepends=('git')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("git+https://github.com/fremantle-gtk2/sapwood.git")
+md5sums=('SKIP')
+
+pkgver() {
+	cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd "$srcdir/${pkgname%-git}"
+    ./autogen.sh
+    ./configure --prefix=/usr --enable-abstract-sockets
+    make
+}
+
+package() {
+	cd "$srcdir/${pkgname%-git}"
+	make DESTDIR="$pkgdir/" install
+}
